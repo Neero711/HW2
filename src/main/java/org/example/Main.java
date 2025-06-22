@@ -29,6 +29,23 @@ public class Main {
                 case 1:
                     createUsr(con, userService);
                     break;
+                case 2:
+                    showAllUsr(userService);
+                    break;
+                case 3:
+                    usrById(con, userService);
+                    break;
+                case 4:
+                    updateUsr(con, userService);
+                    break;
+                case 5:
+                    deleteUsr(con, userService);
+                    break;
+                case 0:
+                    System.out.println("Exit");
+                    return;
+                default:
+                    System.out.println("Error");
             }
         }
     }
