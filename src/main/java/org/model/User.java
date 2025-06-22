@@ -3,7 +3,7 @@ package org.model;
 import java.time.LocalDateTime;
 
 public class User {
-    private int id;
+    private Long id;
     private int age;
     private String name;
     private String email;
@@ -13,7 +13,7 @@ public class User {
 
     }
 
-    public User(int id, int age, String name, String email, LocalDateTime created_at) {
+    public User(Long id, int age, String name, String email, LocalDateTime created_at) {
         this.id = id;
         this.age = age;
         this.name = name;
@@ -21,11 +21,11 @@ public class User {
         this.created_at = created_at;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
