@@ -13,23 +13,23 @@ public class UserService {
     }
 
 
-    public User create(User user) {
+    public User createUser(User user) {
         return repository.create(user);
     }
 
-    public List<User> findAll() {
+    public List<User> findAllUsers() {
         return repository.findAll();
     }
 
-    public User findById(Long id) {
+    public User findUserById(Long id) {
         return repository.findById(id);
     }
 
-    public User update(Long id, User updUser) {
+    public User updateUser(Long id, User updUser) {
         return repository.update(id, updUser);
     }
 
-    public boolean delete(Long id) {
+    public boolean deleteUser   (Long id) {
         return repository.delete(id);
     }
 }
