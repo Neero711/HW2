@@ -3,6 +3,8 @@ package org.model;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import lombok.*;
+
 
 @Entity
 @Table(name="users")
