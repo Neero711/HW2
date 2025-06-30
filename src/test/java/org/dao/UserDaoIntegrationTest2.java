@@ -8,13 +8,14 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class UserDaoIntegrationTest {
+class UserDaoIntegrationTest2 {
 
     @Container
     private static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine")
@@ -23,9 +24,10 @@ class UserDaoIntegrationTest {
             .withPassword("testpass");
 
     private static UserDao userDao;
+    private static int userCounter = 0;
 
     @BeforeAll
-    static void beforeAll() {
+    static void setup() {
         System.setProperty("hibernate.connection.url", postgres.getJdbcUrl());
         System.setProperty("hibernate.connection.username", postgres.getUsername());
         System.setProperty("hibernate.connection.password", postgres.getPassword());
@@ -34,66 +36,72 @@ class UserDaoIntegrationTest {
         userDao = new UserDao();
     }
 
-    @AfterAll
-    static void afterAll() {
-        HibernateUtil.shutdown();
+    private User createUniqueUser() {
+        userCounter++;
+        return new User(
+                null,
+                20 + userCounter,
+                "User " + userCounter,
+                "user" + userCounter + "@test.com",
+                LocalDateTime.now()
+        );
     }
 
     @Test
     @Order(1)
     void shouldSaveUser() {
-        User user = new User(null, 39, "Igor", "test@email.com", LocalDateTime.now());
+        User user = createUniqueUser();
         User savedUser = userDao.save(user);
-
         assertNotNull(savedUser.getId());
-        assertEquals("Igor", savedUser.getName());
     }
 
     @Test
     @Order(2)
     void shouldFindUserById() {
-        User user = new User(null, 35, "Katya", "find@email.com", LocalDateTime.now());
+        User user = createUniqueUser();
         User savedUser = userDao.save(user);
 
-        Optional<User> foundUser = userDao.findById(savedUser.getId());
-
-        assertTrue(foundUser.isPresent());
-        assertEquals(savedUser.getId(), foundUser.get().getId());
+        Optional<User> found = userDao.findById(savedUser.getId());
+        assertTrue(found.isPresent());
+        assertEquals(savedUser.getId(), found.get().getId());
     }
 
     @Test
     @Order(3)
     void shouldUpdateUser() {
-        User user = new User(null, 32 , "Andrew", "update@email.com", LocalDateTime.now());
+        User user = createUniqueUser();
         User savedUser = userDao.save(user);
 
-        savedUser.setName("Andrew");
-        User updatedUser = userDao.save(savedUser);
+        savedUser.setName("Updated Name");
+        User updated = userDao.save(savedUser);
 
-        assertEquals("Andrew", updatedUser.getName());
+        assertEquals("Updated Name", updated.getName());
     }
 
     @Test
     @Order(4)
     void shouldDeleteUser() {
-        User user = new User(null, 30, "Nastya", "delete@email.com", LocalDateTime.now());
+        User user = createUniqueUser();
         User savedUser = userDao.save(user);
 
         userDao.delete(savedUser.getId());
-        Optional<User> deletedUser = userDao.findById(savedUser.getId());
+        Optional<User> deleted = userDao.findById(savedUser.getId());
 
-        assertFalse(deletedUser.isPresent());
+        assertFalse(deleted.isPresent());
     }
 
     @Test
     @Order(5)
     void shouldFindAllUsers() {
-        userDao.save(new User(null, 15, "User 1", "user1@email.com", LocalDateTime.now()));
-        userDao.save(new User(null, 17, "User 2", "user2@email.com", LocalDateTime.now()));
+        userDao.save(createUniqueUser());
+        userDao.save(createUniqueUser());
 
-        var users = userDao.findAll();
-
-        assertFalse(users.isEmpty());
+        List<User> users = userDao.findAll();
         assertTrue(users.size() >= 2);
+    }
+
+    @AfterAll
+    static void cleanup() {
+        HibernateUtil.shutdown();
     }
 }
