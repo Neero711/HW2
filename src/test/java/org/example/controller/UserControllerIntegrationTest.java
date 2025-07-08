@@ -10,14 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -84,29 +86,9 @@ public class UserControllerIntegrationTest {
         assertEquals(userId, response.getBody().getId());
     }
 
-    /*@Test
-    public void createUser() {
-        UserRequestDTO newUser = new UserRequestDTO();
-        newUser.setName("Test");
-        newUser.setEmail("test@test.com");
-        newUser.setAge(30);
-
-        ResponseEntity<UserDTO> response = restTemplate.postForEntity(
-                "/api/users",
-                newUser,
-                UserDTO.class
-        );
-
-
-        UserDTO responseBody = response.getBody();
-        assertNotNull(responseBody);
-        assertEquals("Test", responseBody.getName());
-        assertEquals("test@test.com", responseBody.getEmail());
-        assertNotNull(responseBody.getId());
-    }
-    */
     @Test
     public void createUser() {
+        userRepository.deleteAll();
         UserRequestDTO request = new UserRequestDTO();
         request.setName("Test User");
         request.setEmail("test@example.com");
