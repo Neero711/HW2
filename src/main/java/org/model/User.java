@@ -10,21 +10,26 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "age", nullable = false)
+
+    @Column(nullable = false)
     private Integer age;
-    @Column(name = "name", nullable = false, length = 100)
+
+    @Column( nullable = false, length = 100)
     private String name;
-    @Column(name = "email", nullable = false, unique = true, length = 100)
+
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

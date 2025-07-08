@@ -1,21 +1,13 @@
 package org.example;
 
-import org.dao.UserDao;
-import org.model.User;
-import org.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.util.HibernateUtil;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        try {
+       /* try {
             logger.info("Starting User CRUD application with Hibernate");
             UserDao userDao = new UserDao();
             UserService userService = new UserService(userDao);
@@ -173,5 +165,8 @@ public class Main {
             logger.error("Error deleting user: ", e);
             System.out.println("Error deleting user: " + e.getMessage());
         }
+    }
+    */
+
     }
 }
