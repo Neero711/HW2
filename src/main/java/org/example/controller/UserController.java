@@ -7,6 +7,7 @@ import org.example.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.*;
@@ -31,13 +32,10 @@ public class UserController {
     }
 
     @PostMapping
-    public String createUser(@Valid @ModelAttribute("user") UserRequestDTO user,
-                             BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "users/form";
-        }
-        userService.createUser(user);
-        return "redirect:/users";
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserRequestDTO user) {
+        UserDTO createdUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(createdUser);
     }
 
     @PutMapping("/{id}")

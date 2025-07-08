@@ -36,4 +36,5 @@ build/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Store!/src/test/resources/application-test.properties
+!/src/main/resources/application.properties
