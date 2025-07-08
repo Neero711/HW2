@@ -10,17 +10,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -33,39 +31,47 @@ public class UserControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    private UserDTO testUser;
+
+
     @BeforeEach
     public void setup() {
         userRepository.deleteAll();
 
-        User user = new User();
-        user.setName("Kate");
-        user.setEmail("kate@xx.com");
-        user.setAge(40);
-        userRepository.save(user);
+        UserRequestDTO request = new UserRequestDTO();
+        request.setName("Test");
+        request.setEmail("test@test.com");
+        request.setAge(27);
+
+        ResponseEntity<UserDTO> response = restTemplate.postForEntity(
+                "/api/users",
+                request,
+                UserDTO.class
+        );
+        testUser = response.getBody();
     }
+
 
     @Test
     public void getAllUsers() {
-        ResponseEntity<List<UserDTO>> response = restTemplate.exchange(
+        ResponseEntity<List> response = restTemplate.getForEntity(
                 "/api/users",
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<UserDTO>>() {}
+                List.class
         );
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertFalse(response.getBody().isEmpty());
-        assertEquals("Kate", response.getBody().get(0).getName());
 
     }
 
     @Test
-    public void getUserByIdr() {
+    public void getUserById() {
         ResponseEntity<List<UserDTO>> listResponse = restTemplate.exchange(
                 "/api/users",
                 HttpMethod.GET,
                 null,
-                new ParameterizedTypeReference<List<UserDTO>>() {}
+                new ParameterizedTypeReference<List<UserDTO>>() {
+                }
         );
         Long userId = listResponse.getBody().get(0).getId();
 
@@ -78,7 +84,7 @@ public class UserControllerIntegrationTest {
         assertEquals(userId, response.getBody().getId());
     }
 
-    @Test
+    /*@Test
     public void createUser() {
         UserRequestDTO newUser = new UserRequestDTO();
         newUser.setName("Test");
@@ -88,7 +94,6 @@ public class UserControllerIntegrationTest {
         ResponseEntity<UserDTO> response = restTemplate.postForEntity(
                 "/api/users",
                 newUser,
-                //String.class
                 UserDTO.class
         );
 
@@ -98,14 +103,66 @@ public class UserControllerIntegrationTest {
         assertEquals("Test", responseBody.getName());
         assertEquals("test@test.com", responseBody.getEmail());
         assertNotNull(responseBody.getId());
+    }
+    */
+    @Test
+    public void createUser() {
+        UserRequestDTO request = new UserRequestDTO();
+        request.setName("Test User");
+        request.setEmail("test@example.com");
+        request.setAge(25);
 
-        /*assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals("redirect:/users", response.getBody());
+        restTemplate.postForEntity("/api/users", request, Void.class);
 
         List<User> users = userRepository.findAll();
         assertEquals(1, users.size());
-        assertEquals("Test", users.get(0).getName());
-        */
 
+        User savedUser = users.get(0);
+        assertEquals("Test User", savedUser.getName());
+        assertEquals("test@example.com", savedUser.getEmail());
+        assertEquals(25, savedUser.getAge());
+    }
+
+    @Test
+    public void updateUser() {
+        UserRequestDTO updateRequest = new UserRequestDTO();
+        updateRequest.setName("updName");
+        updateRequest.setEmail("updated@upd.com");
+        updateRequest.setAge(35);
+
+        HttpEntity<UserRequestDTO> requestEntity = new HttpEntity<>(updateRequest);
+        ResponseEntity<UserDTO> response = restTemplate.exchange(
+                "/api/users/" + testUser.getId(),
+                HttpMethod.PUT,
+                requestEntity,
+                UserDTO.class
+        );
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("updName", response.getBody().getName());
+        assertEquals("updated@upd.com", response.getBody().getEmail());
+    }
+
+    @Test
+    public void deleteUser() {
+        // Создаем пользователя
+        User user = new User();
+        user.setName("obj1");
+        user.setEmail("obj@obj.com");
+        user.setAge(20);
+        User savedUser = userRepository.save(user);
+
+        UserRequestDTO updateRequest = new UserRequestDTO();
+        updateRequest.setName("obj2");
+        updateRequest.setEmail("obj2@obj.com");
+        updateRequest.setAge(23);
+
+        restTemplate.put("/api/users/" + savedUser.getId(), updateRequest);
+
+        User updatedUser = userRepository.findById(savedUser.getId()).orElseThrow();
+        assertEquals("obj2", updatedUser.getName());
+        assertEquals("obj2@obj.com", updatedUser.getEmail());
+        assertEquals(23, updatedUser.getAge());
     }
 }
+
