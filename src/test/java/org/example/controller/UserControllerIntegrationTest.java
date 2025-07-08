@@ -90,8 +90,8 @@ public class UserControllerIntegrationTest {
     public void createUser() {
         userRepository.deleteAll();
         UserRequestDTO request = new UserRequestDTO();
-        request.setName("Test User");
-        request.setEmail("test@example.com");
+        request.setName("Test");
+        request.setEmail("test@test.com");
         request.setAge(25);
 
         restTemplate.postForEntity("/api/users", request, Void.class);
@@ -100,8 +100,8 @@ public class UserControllerIntegrationTest {
         assertEquals(1, users.size());
 
         User savedUser = users.get(0);
-        assertEquals("Test User", savedUser.getName());
-        assertEquals("test@example.com", savedUser.getEmail());
+        assertEquals("Test", savedUser.getName());
+        assertEquals("test@test.com", savedUser.getEmail());
         assertEquals(25, savedUser.getAge());
     }
 
@@ -127,7 +127,6 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void deleteUser() {
-        // Создаем пользователя
         User user = new User();
         user.setName("obj1");
         user.setEmail("obj@obj.com");
