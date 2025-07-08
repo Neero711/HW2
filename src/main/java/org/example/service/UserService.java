@@ -1,12 +1,13 @@
-package org.service;
+package org.example.service;
 
-import org.dto.*;
 import lombok.*;
-import org.mapper.UserMapper;
-import org.repository.UserRepository;
+import org.example.dto.UserDTO;
+import org.example.dto.UserRequestDTO;
+import org.example.exception.ResourceNotFoundException;
+import org.example.mapper.UserMapper;
+import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.exception.*;
 
 import java.util.List;
 

@@ -1,15 +1,13 @@
-package org.mapper;
+package org.example.mapper;
 
-import org.dto.UserDTO;
-import org.dto.UserRequestDTO;
+import org.example.dto.UserDTO;
+import org.example.dto.UserRequestDTO;
 import org.mapstruct.factory.Mappers;
-import org.model.User;
+import org.example.model.User;
 import org.mapstruct.*;
 
-import lombok.*;
 
-
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 

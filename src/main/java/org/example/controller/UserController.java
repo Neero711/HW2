@@ -1,12 +1,16 @@
-package org.controller;
+package org.example.controller;
 
-import org.dto.UserDTO;
-import org.dto.UserRequestDTO;
-import org.service.UserService;
+import ch.qos.logback.core.model.Model;
+import org.example.dto.UserDTO;
+import org.example.dto.UserRequestDTO;
+import org.example.service.UserService;
 import jakarta.validation.Valid;
 import lombok.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.constraints.*;
+
 
 import java.util.List;
 
@@ -27,9 +31,13 @@ public class UserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDTO createUser(@Valid @RequestBody UserRequestDTO request) {
-        return userService.createUser(request);
+    public String createUser(@Valid @ModelAttribute("user") UserRequestDTO user,
+                             BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "users/form";
+        }
+        userService.createUser(user);
+        return "redirect:/users";
     }
 
     @PutMapping("/{id}")

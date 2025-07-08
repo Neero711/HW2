@@ -1,4 +1,4 @@
-package org.dto;
+package org.example.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
