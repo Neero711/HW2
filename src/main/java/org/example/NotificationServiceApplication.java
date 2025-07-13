@@ -3,12 +3,11 @@ package org.example;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-@SpringBootApplication(scanBasePackages = "org.example")
-public class UserServiceApplication {
+@SpringBootApplication
+public class NotificationServiceApplication {
     public static void main(String[] args) {
-
-        new SpringApplicationBuilder(UserServiceApplication.class)
-                .properties("server.port=8080")
+        new SpringApplicationBuilder(NotificationServiceApplication.class)
+                .properties("server.port=8081")
                 .run(args);
     }
 }

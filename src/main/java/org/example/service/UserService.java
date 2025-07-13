@@ -6,8 +6,11 @@ import org.example.dto.UserRequestDTO;
 import org.example.exception.ResourceNotFoundException;
 import org.example.mapper.UserMapper;
 import org.example.repository.UserRepository;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.example.notification.model.UserEvent;
+import org.example.notification.model.UserEvent.EventType;
 
 import java.util.List;
 
@@ -16,6 +19,8 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private static final String USER_EVENTS_TOPIC = "user-events";
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
@@ -39,6 +44,10 @@ public class UserService {
         }
 
         var user = userMapper.toEntity(request);
+        UserEvent event = new UserEvent();
+        event.setEmail(user.getEmail());
+        event.setEventType(EventType.CREATED);
+        kafkaTemplate.send(USER_EVENTS_TOPIC, event);
         return userMapper.toDTO(userRepository.save(user));
     }
 
@@ -59,7 +68,14 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
-        userRepository.deleteById(id);
+        userRepository.findById(id).ifPresent(user -> {
+            UserEvent event = new UserEvent();
+            event.setEmail(user.getEmail());
+            event.setEventType(EventType.DELETED);
+            kafkaTemplate.send(USER_EVENTS_TOPIC, event);
+
+            userRepository.deleteById(id);
+        });
     }
 
 }
