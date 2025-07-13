@@ -1,8 +1,8 @@
-package org.example.notification.kafka;
+package org.notification.kafka;
 
 
-import org.example.notification.model.UserEvent;
-import org.example.notification.service.EmailService;
+import org.notification.model.UserEvent;
+import org.notification.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

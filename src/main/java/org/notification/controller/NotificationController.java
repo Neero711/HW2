@@ -1,7 +1,7 @@
-package org.example.notification.controller;
+package org.notification.controller;
 
-import org.example.notification.model.UserEvent;
-import org.example.notification.service.EmailService;
+import org.notification.model.UserEvent;
+import org.notification.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

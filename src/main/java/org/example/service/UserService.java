@@ -9,8 +9,8 @@ import org.example.repository.UserRepository;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.example.notification.model.UserEvent;
-import org.example.notification.model.UserEvent.EventType;
+import org.notification.model.UserEvent;
+import org.notification.model.UserEvent.EventType;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.example.notification.model;
+package org.notification.model;
 
 import lombok.Data;
 
