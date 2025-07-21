@@ -9,7 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequestDTO {
-    // C валидацией относительно реалистичных данных
     @NotBlank(message = "Name is required")
     @Size(min = 2, max = 100)
     private String name;

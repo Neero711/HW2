@@ -4,6 +4,7 @@ import lombok.*;
 import org.example.dto.UserDTO;
 import org.example.dto.UserRequestDTO;
 import org.example.exception.ResourceNotFoundException;
+import org.example.kafka.UserEventProducer;
 import org.example.mapper.UserMapper;
 import org.example.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserEventProducer userEventProducer;
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers() {
@@ -37,8 +39,8 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists");
         }
-
         var user = userMapper.toEntity(request);
+        userEventProducer.sendUserCreatedEvent(user.getEmail());
         return userMapper.toDTO(userRepository.save(user));
     }
 
@@ -59,6 +61,8 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("User not found with id: " + id);
         }
+        UserDTO userToDelete = getUserById(id);
+        userEventProducer.sendUserDeletedEvent(userToDelete.getEmail());
         userRepository.deleteById(id);
     }
 
