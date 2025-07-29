@@ -1,4 +1,4 @@
-package org.example.controller;
+package java.org.example.controller;
 
 import org.example.dto.UserDTO;
 import org.example.dto.UserRequestDTO;
